@@ -10,6 +10,8 @@ const RegistrationController = require('./controllers/RegistrationController');
 const ApprovalController = require('./controllers/ApprovalController');
 const RejectionController = require('./controllers/RejectionController');
 const uploadConfig = require('./config/upload');
+const OrderController =require('./controllers/OrderController');
+const TripController =require('./controllers/TripController');
 
 const routes = express.Router();
 const upload = multer(uploadConfig)
@@ -21,6 +23,12 @@ routes.get('/status', (req, res)=>{
 
 //TODO: add todo extension VSCODE
 
+//login
+routes.post('/login', LoginController.store);
+//User
+routes.post('/user/register', UserController.createUser);
+routes.get('/user/:userId', UserController.getUserById);
+
 //Registration
 routes.post('/registration/:eventId', verifyToken, RegistrationController.create);
 routes.get('/registration', verifyToken, RegistrationController.getMyRegistrations);
@@ -28,22 +36,29 @@ routes.get('/registration/:registration_id', RegistrationController.getRegistrat
 routes.post('/registration/:registration_id/approvals', verifyToken, ApprovalController.approval);
 routes.post('/registration/:registration_id/rejections', verifyToken, RejectionController.rejection);
 
-//login
-routes.post('/login', LoginController.store);
-
 //Dashboard:
 routes.get('/dashboard/:sport', verifyToken, DashboardController.getAllEvents)
+routes.get('/dashboard-orders', verifyToken, DashboardController.getAllOrders)
+routes.get('/dashboard-trips', verifyToken, DashboardController.getAllTrips)
 routes.get('/dashboard', verifyToken, DashboardController.getAllEvents)
 routes.get('/user/events', verifyToken, DashboardController.getEventsByUserId)
 routes.get('/event/:eventId',verifyToken, DashboardController.getEventById)
-
 
 //Events:
 routes.post('/event', verifyToken, upload.single("thumbnail"), EventController.createEvent)
 routes.delete('/event/:eventId', verifyToken, EventController.delete)
 
-//User
-routes.post('/user/register', UserController.createUser);
-routes.get('/user/:userId', UserController.getUserById);
+//Order solve this later
+// 1:
+routes.post('/order', verifyToken, upload.single("thumbnail"), OrderController.createOrder);
+// 2:
+//routes.post('/order', verifyToken, OrderController.createOrder);
+
+//routes.delete('/order/:orderId', verifyToken, OrderController.delete)
+
+
+//Trip
+routes.post('/trip', verifyToken, upload.single("thumbnail"), TripController.createTrip);
+//routes.delete('/trip/:orderId', verifyToken, TripController.delete)
 
 module.exports = routes;
